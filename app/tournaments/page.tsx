@@ -5,9 +5,20 @@ import Link from "next/link";
 import { Navbar } from "@/components/Navbar";
 import { PAST_TOURNAMENTS, UPCOMING_TOURNAMENTS } from "@/data/tournaments";
 
+const description =
+  "Browse upcoming and past padel tournaments. Swiss system draws, schedules, and event details — all in one place.";
+
 export const metadata: Metadata = {
-  title: "Tournaments | Sportchain Padel Ranking",
-  description: "Upcoming and past padel tournaments — Swiss format brackets.",
+  title: "Tournaments",
+  description,
+  openGraph: {
+    title: "Tournaments",
+    description,
+    url: "/tournaments",
+  },
+  alternates: {
+    canonical: "/tournaments",
+  },
 };
 
 function formatSwissLabel(rounds: number) {

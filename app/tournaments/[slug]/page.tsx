@@ -9,7 +9,12 @@ import {
   ALEPH_STANDINGS,
   ALEPH_TOURNAMENT_SLUG,
 } from "@/data/tournaments/aleph_padel_tournament";
-import { getTournamentBySlug, PAST_TOURNAMENTS, UPCOMING_TOURNAMENTS } from "@/data/tournaments";
+import {
+  getTournamentBySlug,
+  PAST_TOURNAMENTS,
+  UPCOMING_TOURNAMENTS,
+} from "@/data/tournaments";
+import { absoluteUrl } from "@/lib/site-config";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -23,11 +28,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const tournament = getTournamentBySlug(slug);
   if (!tournament) {
-    return { title: "Tournament | Sportchain Padel Ranking" };
+    return { title: "Tournament" };
   }
+  const description = `${tournament.name} on ${tournament.dateLabel} at ${tournament.timeLabel}. ${tournament.format} format, ${tournament.rounds} rounds, ${tournament.playerCount} players.`;
   return {
-    title: `${tournament.name} | Sportchain Padel Ranking`,
-    description: `${tournament.name} — ${tournament.dateLabel}, Swiss format.`,
+    title: tournament.name,
+    description,
+    openGraph: {
+      title: tournament.name,
+      description,
+      url: `/tournaments/${tournament.slug}`,
+      images: tournament.imageUrl ? [{ url: tournament.imageUrl, alt: tournament.name }] : undefined,
+    },
+    alternates: {
+      canonical: absoluteUrl(`/tournaments/${tournament.slug}`),
+    },
   };
 }
 

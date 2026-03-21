@@ -1,12 +1,22 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
 import { Navbar } from "@/components/Navbar";
 import { RANKING_PLAYERS } from "@/data/ranking";
 
+const description =
+  "Live-style ELO leaderboard for padel players: rank, matches played, and rating points. Track who’s on top at your club.";
+
 export const metadata: Metadata = {
-  title: "Ranking | Sportchain Padel Ranking",
-  description: "ELO-style player leaderboard — dummy data for development.",
+  title: "Player ranking",
+  description,
+  openGraph: {
+    title: "Player ranking",
+    description,
+    url: "/ranking",
+  },
+  alternates: {
+    canonical: "/ranking",
+  },
 };
 
 export default function RankingPage() {

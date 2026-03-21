@@ -10,6 +10,7 @@ import {
   ALEPH_TOURNAMENT_SLUG,
 } from "@/data/tournaments/aleph_padel_tournament";
 import {
+  formatTournamentFormatLabel,
   getTournamentBySlug,
   PAST_TOURNAMENTS,
   UPCOMING_TOURNAMENTS,
@@ -30,7 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!tournament) {
     return { title: "Tournament" };
   }
-  const description = `${tournament.name} on ${tournament.dateLabel} at ${tournament.timeLabel}. ${tournament.format} format, ${tournament.rounds} rounds, ${tournament.playerCount} players.`;
+  const description = `${tournament.name} on ${tournament.dateLabel} at ${tournament.timeLabel}. ${formatTournamentFormatLabel(tournament)}. ${tournament.playerCount} players${tournament.minElo != null ? `. Min ELO ${tournament.minElo}` : ""}.`;
   return {
     title: tournament.name,
     description,
@@ -44,10 +45,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       canonical: absoluteUrl(`/tournaments/${tournament.slug}`),
     },
   };
-}
-
-function formatSwissLabel(rounds: number) {
-  return `Swiss system · ${rounds} rounds`;
 }
 
 export default async function TournamentBySlugPage({ params }: PageProps) {
@@ -114,8 +111,16 @@ export default async function TournamentBySlugPage({ params }: PageProps) {
                   <dt className="navbar-text text-[10px] uppercase text-[var(--color-subtle-text)]">
                     Format
                   </dt>
-                  <dd className="font-medium">{formatSwissLabel(tournament.rounds)}</dd>
+                  <dd className="font-medium">{formatTournamentFormatLabel(tournament)}</dd>
                 </div>
+                {tournament.minElo != null ? (
+                  <div>
+                    <dt className="navbar-text text-[10px] uppercase text-[var(--color-subtle-text)]">
+                      Min ELO to join
+                    </dt>
+                    <dd className="font-medium tabular-nums">{tournament.minElo}</dd>
+                  </div>
+                ) : null}
               </dl>
             </div>
           </div>

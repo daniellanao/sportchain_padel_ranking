@@ -3,7 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Navbar } from "@/components/Navbar";
-import { PAST_TOURNAMENTS, UPCOMING_TOURNAMENTS } from "@/data/tournaments";
+import {
+  formatTournamentFormatLabel,
+  PAST_TOURNAMENTS,
+  UPCOMING_TOURNAMENTS,
+} from "@/data/tournaments";
 
 const description =
   "Browse upcoming and past padel tournaments. Swiss system draws, schedules, and event details — all in one place.";
@@ -20,10 +24,6 @@ export const metadata: Metadata = {
     canonical: "/tournaments",
   },
 };
-
-function formatSwissLabel(rounds: number) {
-  return `Swiss system · ${rounds} rounds`;
-}
 
 export default function TournamentsPage() {
   return (
@@ -73,6 +73,23 @@ export default function TournamentsPage() {
                         Upcoming
                       </span>
                     </div>
+                    {t.minElo != null ? (
+                      <div
+                        className="mb-3 border-4 border-[var(--color-accent-gold)] bg-[var(--color-primary)] px-3 py-4 text-center shadow-[4px_4px_0_rgba(0,0,0,0.3)]"
+                        role="status"
+                        aria-label={`Minimum ELO required: ${t.minElo}`}
+                      >
+                        <p className="navbar-text text-[10px] uppercase tracking-[0.2em] text-[var(--color-accent-gold)]">
+                          Minimum ELO required
+                        </p>
+                        <p className="navbar-text mt-1 text-4xl font-black leading-none tabular-nums text-white sm:text-5xl">
+                          {t.minElo}
+                        </p>
+                        <p className="mt-2 text-xs font-medium text-[rgba(232,236,245,0.9)]">
+                          You need at least this rating to join
+                        </p>
+                      </div>
+                    ) : null}
                     <p className="mb-3 font-mono text-[10px] leading-tight text-[var(--color-subtle-text)]">
                       {t.slug}
                     </p>
@@ -102,7 +119,7 @@ export default function TournamentsPage() {
                           Format
                         </dt>
                         <dd className="mt-0.5 font-medium text-[var(--color-foreground)]">
-                          {formatSwissLabel(t.rounds)}
+                          {formatTournamentFormatLabel(t)}
                         </dd>
                       </div>
                     </dl>

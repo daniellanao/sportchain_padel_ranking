@@ -46,3 +46,7 @@ export const RANKING_PLAYERS: RankingPlayer[] = [
   { id: "31", firstName: "Óscar", lastName: "Núñez", matchesPlayed: 44, points: 1095 },
   { id: "32", firstName: "Raquel", lastName: "Estévez", matchesPlayed: 40, points: 800 },
 ].sort((a, b) => b.points - a.points);
+
+export function getRankingPlayerById(id: string): RankingPlayer | undefined {
+  return RANKING_PLAYERS.find((p) => p.id === id);
+}

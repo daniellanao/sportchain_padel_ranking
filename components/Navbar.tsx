@@ -1,8 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useId, useState } from "react";
+
+import {
+  CLUB_AUTH_CHANGE_EVENT,
+  clearClubSession,
+  getClubSession,
+  type ClubSession,
+} from "@/lib/club-auth";
 
 const navLinkClass =
   "navbar-text border-2 border-[var(--color-accent-gold)] bg-[var(--color-primary)] px-3 py-2 text-xs uppercase text-white transition hover:brightness-110 sm:px-4";
@@ -18,12 +25,27 @@ const loginMobileClass =
 
 export function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const menuId = useId();
+  const [clubSession, setClubSession] = useState<ClubSession | null>(null);
+
+  useEffect(() => {
+    setClubSession(getClubSession());
+    const sync = () => setClubSession(getClubSession());
+    window.addEventListener(CLUB_AUTH_CHANGE_EVENT, sync);
+    return () => window.removeEventListener(CLUB_AUTH_CHANGE_EVENT, sync);
+  }, []);
 
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
+
+  function handleLogout() {
+    clearClubSession();
+    router.push("/");
+    router.refresh();
+  }
 
   useEffect(() => {
     if (open) {
@@ -57,9 +79,20 @@ export function Navbar() {
           <Link href="/tournaments" className={navLinkClass}>
             Tournaments
           </Link>
-          <button type="button" className={loginDesktopClass}>
-            Login
-          </button>
+          {clubSession ? (
+            <>
+              <Link href="/dashboard" className={navLinkClass}>
+                Dashboard
+              </Link>
+              <button type="button" className={loginDesktopClass} onClick={handleLogout}>
+                Log out
+              </button>
+            </>
+          ) : (
+            <Link href="/login" className={loginDesktopClass}>
+              Club login
+            </Link>
+          )}
         </div>
 
         {/* Mobile menu button */}
@@ -104,9 +137,27 @@ export function Navbar() {
           <Link href="/tournaments" className={mobileLinkClass} onClick={() => setOpen(false)}>
             Tournaments
           </Link>
-          <button type="button" className={loginMobileClass}>
-            Login
-          </button>
+          {clubSession ? (
+            <>
+              <Link href="/dashboard" className={mobileLinkClass} onClick={() => setOpen(false)}>
+                Dashboard
+              </Link>
+              <button
+                type="button"
+                className={loginMobileClass}
+                onClick={() => {
+                  setOpen(false);
+                  handleLogout();
+                }}
+              >
+                Log out
+              </button>
+            </>
+          ) : (
+            <Link href="/login" className={loginMobileClass} onClick={() => setOpen(false)}>
+              Club login
+            </Link>
+          )}
         </div>
       </div>
     </header>
